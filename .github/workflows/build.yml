@@ -1,0 +1,42 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+
+      - name: Set up Hurl
+        uses: gacts/install-hurl@v1
+
+      - name: Build Docker image
+        run: docker build -t toy-todo-server .
+
+      - name: Start Docker container
+        run: docker run -d -p 3000:3000 toy-todo-server
+
+      - name: Wait for service to be ready
+        run: |
+          for i in {1..10}; do
+            if curl -s http://localhost:3000 > /dev/null; then
+              echo "Service is ready";
+              exit 0;
+            fi;
+            echo "Waiting for service...";
+            sleep 3;
+          done;
+          echo "Service failed to start";
+          exit 1;
+
+      - name: Run Hurl tests
+        run: hurl --verbose --test test.hurl
