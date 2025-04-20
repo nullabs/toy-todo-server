@@ -6,6 +6,6 @@
 Dockerfile
 Makefile
 node_modules/
-populate.hurl
+*.hurl
 LICENSE
 README.md
