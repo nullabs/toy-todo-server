@@ -1,9 +1,9 @@
-FROM node:lts-alpine AS deps
+FROM node:lts-alpine@sha256:9bef0ef1e268f60627da9ba7d7605e8831d5b56ad07487d24d1aa386336d1944 AS deps
 WORKDIR /app
 COPY yarn.lock package.json ./
 RUN yarn install --frozen-lockfile --production && yarn cache clean
 
-FROM node:lts-alpine
+FROM node:lts-alpine@sha256:9bef0ef1e268f60627da9ba7d7605e8831d5b56ad07487d24d1aa386336d1944
 ENV NODE_ENV=production
 RUN addgroup -S deploy && adduser -S deploy -G deploy
 RUN apk add --no-cache wget tini
