@@ -4,8 +4,19 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 const app = express();
+
 const PORT = 3000;
 const SECRET_KEY = process.env.SECRET_KEY || 'default_secret';
+const ENDPOINTS = [
+  { method: 'GET', path: '/', description: 'Health check & status' },
+  { method: 'GET', path: '/todos', description: 'List todos (optional: ?done=true, ?q=search)' },
+  { method: 'POST', path: '/todos', description: 'Create a new todo' },
+  { method: 'PUT', path: '/todos/:id', description: 'Update a todo by ID' },
+  { method: 'PATCH', path: '/todos/:id/toggle', description: 'Toggle a todo\'s done status' },
+  { method: 'POST', path: '/todos/complete-all', description: 'Mark all todos as done' },
+  { method: 'DELETE', path: '/todos/:id', description: 'Delete a todo' },
+  { method: 'GET', path: '/help', description: 'List all API endpoints' },
+];
 
 // In-memory todos store
 let todos = [];
@@ -84,16 +95,7 @@ app.delete('/todos/:id', (req, res) => {
 
 app.get('/help', (req, res) => {
   res.json({
-    endpoints: [
-      { method: 'GET',    path: '/', description: 'Health check & status' },
-      { method: 'GET',    path: '/todos', description: 'List todos (optional: ?done=true, ?q=search)' },
-      { method: 'POST',   path: '/todos', description: 'Create a new todo' },
-      { method: 'PUT',    path: '/todos/:id', description: 'Update a todo by ID' },
-      { method: 'PATCH',  path: '/todos/:id/toggle', description: 'Toggle a todo\'s done status' },
-      { method: 'POST',   path: '/todos/complete-all', description: 'Mark all todos as done' },
-      { method: 'DELETE', path: '/todos/:id', description: 'Delete a todo' },
-      { method: 'GET',    path: '/help', description: 'List all API endpoints' },
-    ]
+    ENDPOINTS
   });
 });
 
@@ -101,12 +103,5 @@ app.get('/help', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📖 Available endpoints:`);
-  console.log(`GET     /                   → Health check & status`);
-  console.log(`GET     /todos              → List todos (optional: ?done=true, ?q=search)`);
-  console.log(`POST    /todos              → Create a new todo`);
-  console.log(`PUT     /todos/:id          → Update a todo by ID`);
-  console.log(`PATCH   /todos/:id/toggle   → Toggle a todo's done status`);
-  console.log(`POST    /todos/complete-all → Mark all todos as done`);
-  console.log(`DELETE  /todos/:id          → Delete a todo`);
-  console.log(`GET     /help               → List all API endpoints`);
+  console.table(ENDPOINTS);
 });
